@@ -39,7 +39,6 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
 
         const result = { name, alias, mod }
 
-        // TODO ensure ts paths work here
         const found = this.ctx.imports.match(result, (mod) => {
           const { tsOptions } = this.ctx.parserOptions
           if (!tsOptions?.pathMappings) return
@@ -69,7 +68,6 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     return this.imports.some((imp) => imp.mod === node.source.value)
   }
 
-  // check imports and ensure that it's only dissalowed within panda styles
   isPandaFunction(caller: string) {
     return this.file.match(caller)
   }
@@ -94,7 +92,7 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
       return true
     }
 
-    // css({...})
+    // E.g. css({...})
     if (callAncestor.callee.type === AST_NODE_TYPES.Identifier) {
       return this.isPandaFunction(callAncestor.callee.name)
     }
@@ -114,17 +112,13 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     node: T,
     type: A,
   ): Node | undefined {
-    // TODO need to find which method is more optimal
-    const ancestors = this.context.getAncestors().slice().reverse()
-    return ancestors.find((anc) => anc.type === type) as Node
+    let current: TSESTree.Node | undefined = node.parent
+    while (current) {
+      if (current.type === type) return current as Node
+      current = current.parent
+    }
 
-    // let current: TSESTree.Node | undefined = node
-    // while (current) {
-    //   if (current.type === type) return current as Node
-    //   current = current.parent
-    // }
-
-    // return
+    return
   }
 
   hasAncestorOfType<T extends TSESTree.Node, A extends AST_NODE_TYPES>(node: T, type: A) {
