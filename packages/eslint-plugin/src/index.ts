@@ -4,6 +4,8 @@ import noInvalidCondition, { RULE_NAME as NoInvalidCondition } from './rules/no-
 import preferAtomicProperties, { RULE_NAME as PreferAtomicProperties } from './rules/prefer-atomic-properties'
 import noShorthandProp, { RULE_NAME as NoShorthandProp } from './rules/no-shorthand-prop'
 import noUnsafeTokenUsage, { RULE_NAME as NoUnsafeTokenUsage } from './rules/no-unsafe-token-fn-usage'
+import fileNotIncluded, { RULE_NAME as FileNotIncluded } from './rules/file-not-included'
+import fileExcluded, { RULE_NAME as FileExcluded } from './rules/file-excluded'
 
 export const rules = {
   [NoDebug]: noDebug,
@@ -11,6 +13,8 @@ export const rules = {
   [PreferAtomicProperties]: preferAtomicProperties,
   [NoShorthandProp]: noShorthandProp,
   [NoUnsafeTokenUsage]: noUnsafeTokenUsage,
+  [FileNotIncluded]: fileNotIncluded,
+  [FileExcluded]: fileExcluded,
 } as any
 
 const plugin = {

@@ -6,15 +6,15 @@ import type { FileMatcher, ImportResult } from '@pandacss/core'
 
 export class PandaHelpers<T extends RuleContext<any, any>> {
   ctx: PandaContext
-  context: T
-  imports: ImportResult[] = []
-  file: FileMatcher
+  private context: T
+  private imports: ImportResult[] = []
+  private file: FileMatcher
 
   constructor(context: T) {
     // const cwd = context.getCwd() //* Might be useful in getting panda context
+    this.context = context
 
     this.ctx = createContext({ importMap: './panda' })
-    this.context = context
     this.getImports()
     this.file = this.ctx.imports.file(this.imports)
 
@@ -46,11 +46,6 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     })
   }
 
-  // TODO Usage is for file-not-included and file-included rules
-  isPandaImport(node: TSESTree.ImportDeclaration) {
-    return this.imports.some((imp) => imp.mod === node.source.value)
-  }
-
   isPandaProp<T extends TSESTree.Node>(node: T) {
     const jsxAncestor = this.getAncestorOfType(node, AST_NODE_TYPES.JSXOpeningElement)
     if (!jsxAncestor || jsxAncestor.name.type !== AST_NODE_TYPES.JSXIdentifier) return
@@ -61,6 +56,10 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     if (jsxName !== 'Circle' && jsxName !== 'PandaComp') return
 
     return true
+  }
+
+  isPandaImport(node: TSESTree.ImportDeclaration) {
+    return this.imports.some((imp) => imp.mod === node.source.value)
   }
 
   // check imports and ensure that it's only dissalowed within panda styles

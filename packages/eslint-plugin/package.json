@@ -33,7 +33,8 @@
   "dependencies": {
     "@pandacss/core": "workspace:*",
     "@pandacss/node": "workspace:*",
-    "@pandacss/types": "workspace:*"
+    "@pandacss/types": "workspace:*",
+    "minimatch": "^9.0.3"
   },
   "peerDependencies": {
     "eslint": "*"
