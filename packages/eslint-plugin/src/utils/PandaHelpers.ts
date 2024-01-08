@@ -13,15 +13,11 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
   private file: FileMatcher
 
   constructor(context: T) {
-    // const cwd = context.getCwd() //* Might be useful in getting panda context
     this.context = context
 
     this.ctx = createContext({ importMap: './panda' })
     this.getImports()
     this.file = this.ctx.imports.file(this.imports)
-
-    // console.log('hmm', this.file.matchTag(''))
-    // console.log('hmm', this.file)
   }
 
   getImports() {
@@ -56,11 +52,8 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     const jsxAncestor = this.getAncestorOfType(node, AST_NODE_TYPES.JSXOpeningElement)
     if (!jsxAncestor || jsxAncestor.name.type !== AST_NODE_TYPES.JSXIdentifier) return
 
-    const jsxName = jsxAncestor.name.name
-
-    // TODO limit only to panda components i.e. imports and created with styled
-    if (jsxName !== 'Circle' && jsxName !== 'PandaComp') return
-
+    // Ensure component is a panda component
+    if (!this.file.match(jsxAncestor.name.name)) return
     return true
   }
 

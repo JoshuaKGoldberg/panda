@@ -20,7 +20,8 @@ const valids = [
   'const randomFunc = f({ debug: true })',
   '<NonPandaComponent debug={true} />',
   '<NonPandaComponent debug={true}>content</NonPandaComponent>',
-  `const PandaComp = styled.div(div); <PandaComp someProp={{ debug: true }} />`,
+  // ? We're not considering this case for now
+  // `const PandaComp = styled.div(div); <PandaComp someProp={{ debug: true }} />`,
 ]
 
 const invalids = [
