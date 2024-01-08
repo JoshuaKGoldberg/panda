@@ -1,16 +1,54 @@
-import type { PandaContext } from '@pandacss/node'
 import { createContext } from '@pandacss/fixture'
-import { TSESTree, AST_NODE_TYPES } from '@typescript-eslint/utils'
-import { type RuleContext } from '@typescript-eslint/utils/ts-eslint'
+import { type TSESTree, AST_NODE_TYPES } from '@typescript-eslint/utils'
+import type { PandaContext } from '@pandacss/node'
+import type { RuleContext } from '@typescript-eslint/utils/ts-eslint'
+import type { FileMatcher, ImportResult } from '@pandacss/core'
 
 export class PandaHelpers<T extends RuleContext<any, any>> {
   ctx: PandaContext
   context: T
+  imports: ImportResult[] = []
+  file: FileMatcher
 
   constructor(context: T) {
-    this.ctx = createContext()
+    // const cwd = context.getCwd() //* Might be useful in getting panda context
+
+    this.ctx = createContext({ importMap: './panda' })
     this.context = context
-    console.log('first', this.ctx.paths)
+    this.getImports()
+    this.file = this.ctx.imports.file(this.imports)
+
+    // console.log('hmm', this.file.matchTag(''))
+    // console.log('hmm', this.file)
+  }
+
+  getImports() {
+    this.context.getSourceCode().ast.body.forEach((node) => {
+      if (node.type !== 'ImportDeclaration') return
+
+      const imps = node.specifiers
+        .map((specifier) => {
+          if (specifier.type !== 'ImportSpecifier') return
+
+          const imp = {
+            mod: node.source.value,
+            alias: specifier.local.name,
+            name: specifier.imported.name,
+          }
+
+          // TODO beware of TS paths
+          if (!this.ctx.imports.match(imp)) return
+          return imp
+        })
+        .filter(Boolean) as ImportResult[]
+
+      this.imports.push(...imps)
+    })
+  }
+
+  // TODO Usage is for file-not-included and file-included rules
+  isPandaImport(node: TSESTree.ImportDeclaration) {
+    return this.imports.some((imp) => imp.mod === node.source.value)
   }
 
   isPandaProp<T extends TSESTree.Node>(node: T) {
@@ -25,14 +63,9 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     return true
   }
 
+  // check imports and ensure that it's only dissalowed within panda styles
   isPandaFunction(caller: string) {
-    // TODO check imports and ensure that it's only dissalowed within panda styles
-    return caller === 'css'
-  }
-
-  isPandaImport<T extends TSESTree.Node>(node: T) {
-    // TODO ensure import is from panda
-    return !!node
+    return this.file.match(caller)
   }
 
   isValidStyledProp<T extends TSESTree.Node | string>(node: T) {
@@ -75,14 +108,17 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     node: T,
     type: A,
   ): Node | undefined {
-    let current: TSESTree.Node | undefined = node
+    // TODO need to find which method is more optimal
+    const ancestors = this.context.getAncestors().slice().reverse()
+    return ancestors.find((anc) => anc.type === type) as Node
 
-    while (current) {
-      if (current.type === type) return current as Node
-      current = current.parent
-    }
+    // let current: TSESTree.Node | undefined = node
+    // while (current) {
+    //   if (current.type === type) return current as Node
+    //   current = current.parent
+    // }
 
-    return
+    // return
   }
 
   hasAncestorOfType<T extends TSESTree.Node, A extends AST_NODE_TYPES>(node: T, type: A) {
