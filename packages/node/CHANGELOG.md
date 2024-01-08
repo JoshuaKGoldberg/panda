@@ -1,5 +1,41 @@
 # @pandacss/node
 
+## 0.25.0
+
+### Patch Changes
+
+- bc154358: Fix config dependencies detection by re-introducing the file tracing utility
+- Updated dependencies [59fd291c]
+- Updated dependencies [de282f60]
+- Updated dependencies [de282f60]
+  - @pandacss/generator@0.25.0
+  - @pandacss/types@0.25.0
+  - @pandacss/core@0.25.0
+  - @pandacss/token-dictionary@0.25.0
+  - @pandacss/parser@0.25.0
+  - @pandacss/config@0.25.0
+  - @pandacss/error@0.25.0
+  - @pandacss/extractor@0.25.0
+  - @pandacss/logger@0.25.0
+  - @pandacss/shared@0.25.0
+
+## 0.24.2
+
+### Patch Changes
+
+- Updated dependencies [71e82a4e]
+- Updated dependencies [61ebf3d2]
+  - @pandacss/shared@0.24.2
+  - @pandacss/types@0.24.2
+  - @pandacss/core@0.24.2
+  - @pandacss/config@0.24.2
+  - @pandacss/generator@0.24.2
+  - @pandacss/parser@0.24.2
+  - @pandacss/token-dictionary@0.24.2
+  - @pandacss/error@0.24.2
+  - @pandacss/extractor@0.24.2
+  - @pandacss/logger@0.24.2
+
 ## 0.24.1
 
 ### Patch Changes

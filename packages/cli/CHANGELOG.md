@@ -1,5 +1,39 @@
 # @pandacss/dev
 
+## 0.25.0
+
+### Patch Changes
+
+- Updated dependencies [bc154358]
+- Updated dependencies [59fd291c]
+- Updated dependencies [de282f60]
+  - @pandacss/node@0.25.0
+  - @pandacss/types@0.25.0
+  - @pandacss/token-dictionary@0.25.0
+  - @pandacss/postcss@0.25.0
+  - @pandacss/config@0.25.0
+  - @pandacss/preset-panda@0.25.0
+  - @pandacss/error@0.25.0
+  - @pandacss/logger@0.25.0
+  - @pandacss/shared@0.25.0
+
+## 0.24.2
+
+### Patch Changes
+
+- b2e00ca0: Fix an issue with the `panda init` command which didn't update existing `.gitignore` to include the
+  `styled-system`
+- Updated dependencies [71e82a4e]
+  - @pandacss/shared@0.24.2
+  - @pandacss/types@0.24.2
+  - @pandacss/config@0.24.2
+  - @pandacss/node@0.24.2
+  - @pandacss/token-dictionary@0.24.2
+  - @pandacss/preset-panda@0.24.2
+  - @pandacss/postcss@0.24.2
+  - @pandacss/error@0.24.2
+  - @pandacss/logger@0.24.2
+
 ## 0.24.1
 
 ### Patch Changes

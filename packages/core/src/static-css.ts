@@ -1,6 +1,7 @@
 import type { Stylesheet } from '@pandacss/core'
-import type { CssRule, StaticCssOptions } from '@pandacss/types'
-import type { CoreContext } from './core-context'
+import { esc } from '@pandacss/shared'
+import type { CssRule, RecipeRule, StaticCssOptions } from '@pandacss/types'
+import type { Context } from './context'
 import { StyleDecoder } from './style-decoder'
 import { StyleEncoder } from './style-encoder'
 
@@ -21,7 +22,12 @@ export class StaticCss {
   encoder: StyleEncoder
   decoder: StyleDecoder
 
-  constructor(private context: CoreContext) {
+  constructor(
+    private context: Pick<
+      Context,
+      'encoder' | 'decoder' | 'utility' | 'patterns' | 'recipes' | 'createSheet' | 'config'
+    >,
+  ) {
     this.encoder = context.encoder
     this.decoder = context.decoder
   }
@@ -50,7 +56,8 @@ export class StaticCss {
       return recipeConfig?.variantKeyMap
     }
 
-    const { css = [], recipes = {}, patterns = {} } = options
+    const { css = [], patterns = {} } = options
+    const recipes = (options.recipes ?? {}) as Record<string, RecipeRule[]>
     const results: StaticCssResults = { css: [], recipes: [], patterns: [] }
 
     css.forEach((rule) => {
@@ -163,25 +170,31 @@ export class StaticCss {
     return createClassNameRegex(Array.from(decoder.classNames.keys()))
   }
 
-  process(staticCss: StaticCssOptions, stylesheet?: Stylesheet) {
-    const { recipes } = this.context
-    const sheet = stylesheet ?? this.context.createSheet()
+  process(options: StaticCssOptions, stylesheet?: Stylesheet) {
+    const { encoder, decoder, context } = this
 
-    staticCss.recipes = staticCss.recipes ?? {}
+    const sheet = stylesheet ?? context.createSheet()
 
-    const { theme = {} } = this.context.config
+    const staticCss = {
+      ...options,
+      recipes: { ...(typeof options.recipes === 'string' ? {} : options.recipes) },
+    } satisfies StaticCssOptions
+
+    const { theme = {} } = context.config
     const recipeConfigs = Object.assign({}, theme.recipes, theme.slotRecipes)
+    const useAllRecipes = options.recipes === '*'
 
     Object.entries(recipeConfigs).forEach(([name, recipe]) => {
+      if (useAllRecipes) {
+        staticCss.recipes[name] = ['*']
+      }
+
       if (recipe.staticCss) {
-        staticCss.recipes![name] = recipe.staticCss
+        staticCss.recipes[name] = recipe.staticCss
       }
     })
 
     const results = this.getStyleObjects(staticCss)
-    // console.log(JSON.stringify(results.recipes, null, 2))
-
-    const { encoder, decoder } = this
 
     results.css.forEach((css) => {
       encoder.hashStyleObject(encoder.atomic, css)
@@ -189,9 +202,6 @@ export class StaticCss {
 
     results.recipes.forEach((result) => {
       Object.entries(result).forEach(([name, value]) => {
-        const recipeConfig = recipes.getConfig(name)
-        if (!recipeConfig) return
-
         encoder.processRecipe(name, value)
       })
     })
@@ -220,33 +230,12 @@ export class StaticCss {
   }
 }
 
-// ??? Replace with shared one
 function createClassNameRegex(classNames: string[]) {
-  const escapedClassNames = classNames.map((name) => escapeRegExp(name))
+  const escapedClassNames = classNames.map((name) => esc(name))
   const pattern = `(${escapedClassNames.join('|')})`
   return new RegExp(`\\b${pattern}\\b`, 'g')
 }
 
-const ESCAPE_CHARS = /[.*+?^${}()|[\]\\]/g
-const ESCAPE_MAP: Record<string, string> = {
-  '.': '\\.',
-  '*': '\\*',
-  '+': '\\+',
-  '?': '\\?',
-  '^': '\\^',
-  $: '\\$',
-  '{': '\\{',
-  '}': '\\}',
-  '(': '\\(',
-  ')': '\\)',
-  '[': '\\[',
-  ']': '\\]',
-  '\\': '\\\\',
-  '|': '\\|',
+function formatCondition(breakpoints: string[], condition: string) {
+  return breakpoints.includes(condition) ? condition : `_${condition}`
 }
-
-function escapeRegExp(str: string): string {
-  return str.replace(ESCAPE_CHARS, (match) => ESCAPE_MAP[match])
-}
-
-const formatCondition = (breakpoints: string[], value: string) => (breakpoints.includes(value) ? value : `_${value}`)

@@ -2,6 +2,52 @@ import { describe, expect, test } from 'vitest'
 import { parseAndExtract } from './fixture'
 
 describe('extract to css output pipeline', () => {
+  test('css with base', () => {
+    const code = `
+    import { css } from "styled-system/css"
+    
+    css({
+      base: { color: "blue" },
+      md: { color: "red" }
+    })
+    `
+
+    const result = parseAndExtract(code)
+
+    expect(result.json).toMatchInlineSnapshot(`
+      [
+        {
+          "data": [
+            {
+              "base": {
+                "color": "blue",
+              },
+              "md": {
+                "color": "red",
+              },
+            },
+          ],
+          "name": "css",
+          "type": "css",
+        },
+      ]
+    `)
+
+    expect(result.css).toMatchInlineSnapshot(`
+      "@layer utilities {
+        .text_blue {
+          color: blue
+      }
+
+        @media screen and (min-width: 48em) {
+          .md\\\\:text_red {
+            color: red
+          }
+      }
+      }"
+    `)
+  })
+
   test('basic usage', () => {
     const code = `
       import { styled } from "styled-system/jsx"
@@ -64,7 +110,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -211,7 +257,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -686,7 +732,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "styled",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -715,7 +761,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "styled.div",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -813,7 +859,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -866,7 +912,7 @@ describe('extract to css output pipeline', () => {
             {},
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -937,7 +983,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -995,7 +1041,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -1113,7 +1159,7 @@ describe('extract to css output pipeline', () => {
               },
             ],
             "name": "css",
-            "type": "object",
+            "type": "css",
           },
           {
             "data": [
@@ -1124,7 +1170,7 @@ describe('extract to css output pipeline', () => {
               },
             ],
             "name": "css",
-            "type": "object",
+            "type": "css",
           },
           {
             "data": [
@@ -1134,7 +1180,7 @@ describe('extract to css output pipeline', () => {
               },
             ],
             "name": "css",
-            "type": "object",
+            "type": "css",
           },
         ]
       `)
@@ -1359,7 +1405,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "styled.div",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -1368,7 +1414,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "styled",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -1405,7 +1451,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "styled.div",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -1486,7 +1532,7 @@ describe('extract to css output pipeline', () => {
             {},
           ],
           "name": "styled.div",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -1509,7 +1555,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "cva",
-          "type": "object",
+          "type": "cva",
         },
         {
           "data": [
@@ -1521,7 +1567,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "cva",
-          "type": "object",
+          "type": "cva",
         },
         {
           "data": [
@@ -1650,7 +1696,7 @@ describe('extract to css output pipeline', () => {
             {},
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -1939,7 +1985,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -1963,7 +2009,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -2057,7 +2103,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "cva",
-          "type": "object",
+          "type": "cva",
         },
       ]
     `)
@@ -2129,7 +2175,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -2252,7 +2298,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -2557,7 +2603,7 @@ describe('extract to css output pipeline', () => {
             {},
           ],
           "name": "styled",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -2686,7 +2732,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -2820,7 +2866,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -2898,7 +2944,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "css",
-          "type": "object",
+          "type": "css",
         },
       ]
     `)
@@ -3091,14 +3137,14 @@ describe('extract to css output pipeline', () => {
             {},
           ],
           "name": "styled",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
             {},
           ],
           "name": "styled",
-          "type": "object",
+          "type": "css",
         },
         {
           "data": [
@@ -3239,7 +3285,7 @@ describe('extract to css output pipeline', () => {
             },
           ],
           "name": "sva",
-          "type": "object",
+          "type": "sva",
         },
       ]
     `)

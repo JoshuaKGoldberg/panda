@@ -1,4 +1,4 @@
-import type { ParserOptions } from '@pandacss/generator'
+import type { ParserOptions } from '@pandacss/core'
 import type { ConfigTsOptions, PandaHookable, Runtime } from '@pandacss/types'
 import {
   FileSystemRefreshResult,
@@ -109,7 +109,7 @@ export class Project {
     const { readFile, parserOptions } = this.options
 
     const content = readFile(filePath)
-    parserOptions.encoder.fromJSON(content)
+    parserOptions.encoder.fromJSON(JSON.parse(content))
 
     const result = new ParserResult(parserOptions)
     return result.setFilePath(filePath)

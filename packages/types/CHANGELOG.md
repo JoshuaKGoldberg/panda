@@ -1,5 +1,18 @@
 # @pandacss/types
 
+## 0.25.0
+
+### Patch Changes
+
+- 59fd291c: Add a way to generate the staticCss for _all_ recipes (and all variants of each recipe)
+
+## 0.24.2
+
+### Patch Changes
+
+- 71e82a4e: Fix a regression with utility where boolean values would be treated as a string, resulting in "false" being
+  seen as a truthy value
+
 ## 0.24.1
 
 ## 0.24.0
