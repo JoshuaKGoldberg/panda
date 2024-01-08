@@ -1,4 +1,6 @@
 import { createContext } from '@pandacss/fixture'
+import { resolveTsPathPattern } from '@pandacss/config/ts-path'
+
 import { type TSESTree, AST_NODE_TYPES } from '@typescript-eslint/utils'
 import type { PandaContext } from '@pandacss/node'
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint'
@@ -26,23 +28,28 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     this.context.getSourceCode().ast.body.forEach((node) => {
       if (node.type !== 'ImportDeclaration') return
 
-      const imps = node.specifiers
-        .map((specifier) => {
-          if (specifier.type !== 'ImportSpecifier') return
+      const mod = node.source.value
+      if (!mod) return
 
-          const imp = {
-            mod: node.source.value,
-            alias: specifier.local.name,
-            name: specifier.imported.name,
-          }
+      node.specifiers.forEach((specifier) => {
+        if (specifier.type !== 'ImportSpecifier') return
 
-          // TODO beware of TS paths
-          if (!this.ctx.imports.match(imp)) return
-          return imp
+        const name = specifier.imported.name
+        const alias = specifier.local.name
+
+        const result = { name, alias, mod }
+
+        // TODO ensure ts paths work here
+        const found = this.ctx.imports.match(result, (mod) => {
+          const { tsOptions } = this.ctx.parserOptions
+          if (!tsOptions?.pathMappings) return
+          return resolveTsPathPattern(tsOptions.pathMappings, mod)
         })
-        .filter(Boolean) as ImportResult[]
 
-      this.imports.push(...imps)
+        if (!found) return
+
+        this.imports.push(result)
+      })
     })
   }
 
