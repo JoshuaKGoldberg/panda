@@ -2,9 +2,10 @@ import { createContext } from '@pandacss/fixture'
 import { resolveTsPathPattern } from '@pandacss/config/ts-path'
 
 import { type TSESTree, AST_NODE_TYPES } from '@typescript-eslint/utils'
-import type { PandaContext } from '@pandacss/node'
+import { loadConfigAndCreateContext, type PandaContext } from '@pandacss/node'
 import type { RuleContext } from '@typescript-eslint/utils/ts-eslint'
 import type { FileMatcher, ImportResult } from '@pandacss/core'
+import { syncAction } from 'src/utils'
 
 export class PandaHelpers<T extends RuleContext<any, any>> {
   ctx: PandaContext
@@ -14,8 +15,14 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
 
   constructor(context: T) {
     this.context = context
-
-    this.ctx = createContext({ importMap: './panda' })
+    console.log('syncAction', syncAction())
+    this.ctx = syncAction()
+    console.log('this.ctx', this.ctx)
+    //   if (process.env.MODE === 'test') {
+    //     this.ctx = createContext({ importMap: './panda' })
+    //   } else {
+    //    this.ctx = syncAction()
+    //   }
     this.getImports()
     this.file = this.ctx.imports.file(this.imports)
   }
