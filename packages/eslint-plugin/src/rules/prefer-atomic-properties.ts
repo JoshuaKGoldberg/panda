@@ -18,7 +18,9 @@ const rule: Rule = createRule({
   },
   defaultOptions: [],
   create(context) {
+    console.log('In prefer-atomic-properties', { context })
     const h = new PandaHelpers(context)
+    console.log('made h', { h })
 
     const resolveCompositeProperty = (name: string) => {
       if (Object.hasOwn(shorthandProperties, name)) return name

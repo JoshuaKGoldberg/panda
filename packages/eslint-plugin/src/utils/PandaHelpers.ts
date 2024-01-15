@@ -7,6 +7,8 @@ import type { RuleContext } from '@typescript-eslint/utils/ts-eslint'
 import type { FileMatcher, ImportResult } from '@pandacss/core'
 import { syncAction } from 'src/utils'
 
+console.log('PandaHelpers.ts')
+
 export class PandaHelpers<T extends RuleContext<any, any>> {
   ctx: PandaContext
   private context: T
@@ -14,6 +16,7 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
   private file: FileMatcher
 
   constructor(context: T) {
+    console.log('PandaHelpers constructor')
     this.context = context
     console.log('syncAction', syncAction())
     this.ctx = syncAction()
@@ -21,7 +24,7 @@ export class PandaHelpers<T extends RuleContext<any, any>> {
     //   if (process.env.MODE === 'test') {
     //     this.ctx = createContext({ importMap: './panda' })
     //   } else {
-    //    this.ctx = syncAction()
+    this.ctx = syncAction()
     //   }
     this.getImports()
     this.file = this.ctx.imports.file(this.imports)

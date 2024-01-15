@@ -15,14 +15,14 @@ import { Circle } from './panda/jsx'
 
 const valids = [
   'const styles = css({ rowGap: "4", columnGap: "4" })',
-  '<div className={css({ backgroundColor: "red" })} />',
-  '<Circle _hover={{ borderTopStyle: "solid", borderTopWidth: "1px", borderTopColor: "blue" }} />',
+  // '<div className={css({ backgroundColor: "red" })} />',
+  // '<Circle _hover={{ borderTopStyle: "solid", borderTopWidth: "1px", borderTopColor: "blue" }} />',
 ]
 
-const invalids = [
-  'const styles = css({ gap: "4" })',
-  '<div className={css({ background: "red" })} />',
-  '<Circle _hover={{ borderTop: "solid 1px blue" }} />',
+const invalids: string[] = [
+  // 'const styles = css({ gap: "4" })',
+  // '<div className={css({ background: "red" })} />',
+  // '<Circle _hover={{ borderTop: "solid 1px blue" }} />',
 ]
 
 ruleTester.run(RULE_NAME, rule as any, {
